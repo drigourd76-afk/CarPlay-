@@ -52,6 +52,7 @@ h2{font-size:28px;margin:14px 0}
 #app{max-width:none}.sb{padding:6px 18px;font-size:17px}.sb .r{font-size:14px}.bat{width:30px;height:14px}.dock{top:40px;bottom:8px;width:64px}.dock .a svg{width:min(60px,14vh);height:min(60px,14vh)}.dock .b{width:min(64px,14vh);height:min(64px,14vh)}.scr{inset:40px 0 8px 84px}#gps .map{height:46vh;min-height:150px;margin-top:0}#app .np{top:44px;padding:12px 8px}#app .np svg.art{width:min(130px,26vh);height:min(130px,26vh)}#app .np .t{font-size:20px}.keys{grid-template-columns:repeat(6,1fr)}.orb{margin:6px auto;width:100px;height:100px}h2{margin:8px 0;font-size:24px}
 .st{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card);margin-top:8px}.st span{font-size:26px;width:30px;text-align:center}.st small{display:block;color:var(--mut)}
 .sr{display:flex;gap:8px;margin:6px 0}.sr input{flex:1;min-width:0;padding:12px;border-radius:14px;border:0;background:var(--card);color:#fff;font-size:16px}.sr button{background:#0a84ff;border-radius:14px;font-size:16px;padding:0 16px}#map{height:42vh;min-height:140px;border-radius:20px;overflow:hidden}
+@media (orientation:portrait){#gps{right:8px;bottom:92px}#app .np{left:84px;right:8px;top:auto;bottom:8px;width:auto;height:70px;flex-wrap:nowrap;justify-content:flex-start;padding:0 8px;gap:8px}#app .np svg.art{width:50px;height:50px;border-radius:9px}#app .np .t{width:auto;flex:1;text-align:left;font-size:16px}#app .np button{padding:4px}#map{height:38vh}}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -147,7 +148,7 @@ function call(){document.getElementById('num').textContent=n?'Appel de '+n+'…'
 function t(){var d=new Date();document.getElementById('clk').textContent=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
 t();setInterval(t,30000);
 var map=L.map('map',{zoomControl:false}).setView([49.472,1.047],14);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 var me=null,line=null,pos=null,pts=[],man=[],ci=0,first=true;
 function $(i){return document.getElementById(i)}
 function msg(t){$('gb').textContent=t;$('gs').textContent=''}
