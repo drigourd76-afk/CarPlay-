@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CarPlay Scooter 50</title>
+<style>
+:root{--bg:#03030d;--fg:#fff;--card:rgba(38,38,58,.8);--mut:#a0a0b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#03030d}}
+:root[data-theme="dark"]{--bg:#03030d}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,"SF Pro Display","Helvetica Neue",Arial,sans-serif}
+#app{position:relative;max-width:900px;height:100%;margin:0 auto;overflow:hidden;background:var(--bg)}
+#bgsvg{position:absolute;inset:0;width:100%;height:100%}
+.sb{position:relative;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;font-size:24px;font-weight:600;z-index:2}
+.sb .r{display:flex;gap:8px;align-items:center;font-size:20px}
+.bat{width:42px;height:20px;border:2px solid #fff9;border-radius:6px;padding:1px}.bat i{display:block;height:100%;background:#fff;border-radius:3px}
+.scr{position:absolute;inset:56px 0 90px;display:none;padding:0 18px;overflow-y:auto;z-index:1}
+.scr.on{display:block}
+#home{padding:0}
+.grid{position:absolute;top:19%;left:0;right:0;height:50%;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;text-align:center}
+.ic{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0;cursor:pointer}
+.ic svg{width:min(26vw,126px);height:auto;filter:drop-shadow(0 4px 10px #0006)}
+.dots{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:12px}
+.dots i{width:14px;height:14px;border-radius:50%;background:#fff5}.dots i:first-child{background:#fff}
+.np{display:flex;position:absolute;left:8px;right:8px;top:56px;height:70px;border-radius:20px;background:var(--card);border:1px solid #fff3;align-items:center;gap:12px;padding:0 12px;backdrop-filter:blur(14px);z-index:3}
+.np svg.art{width:50px;height:50px;border-radius:9px;flex:none}
+.np .t{flex:1;line-height:1.15;font-size:20px;font-weight:600}.np .t small{color:#c8c8d8;display:block;font-size:19px;font-weight:500}
+button{background:none;border:0;color:#fff;cursor:pointer;padding:6px 10px;display:grid;place-items:center}
+button svg{width:30px;height:30px;fill:#fff}
+.dock{position:absolute;left:8px;right:8px;bottom:8px;height:70px;display:flex;justify-content:space-between;align-items:center;z-index:3}
+.dock .b{width:70px;height:70px;border-radius:18px;background:var(--card);display:grid;place-items:center;cursor:pointer;border:1px solid #fff2}
+.dock .b svg{width:34px;height:34px;fill:#fff}
+.dock .a svg{width:62px;height:62px;cursor:pointer}
+h2{font-size:28px;margin:14px 0}
+.row{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--card);margin-bottom:10px}
+.av{width:44px;height:44px;border-radius:50%;background:#3a7bff;display:grid;place-items:center;font-weight:700;flex:none}
+.row small{color:var(--mut);display:block}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.keys div{padding:14px;text-align:center;font-size:26px;border-radius:16px;background:var(--card);cursor:pointer}
+#num{font-size:30px;min-height:40px;text-align:center;margin:8px}
+.orb{width:150px;height:150px;border-radius:50%;margin:60px auto 24px;background:conic-gradient(#ff4fd8,#4f8bff,#2de2ff,#ff4fd8);animation:p 1.6s ease-in-out infinite}
+@keyframes p{50%{transform:scale(1.15)}}
+.map{position:relative;height:230px;border-radius:20px;overflow:hidden;background:#12182b}
+.map svg{width:100%;height:100%}
+.lim{position:absolute;right:10px;top:10px;width:58px;height:58px;border-radius:50%;background:#fff;border:6px solid #e0142b;color:#111;display:grid;place-items:center;font-weight:800;font-size:22px}
+.ban{background:#1a7f37;border-radius:16px;padding:12px 14px;margin-top:10px;display:flex;gap:10px;align-items:center}
+.ban b{font-size:20px}.bad{background:#7a1f1f;font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.chips span{padding:10px 14px;border-radius:20px;background:var(--card);font-size:16px;cursor:pointer;border:1px solid #fff2}.dock .act{outline:2px solid #fff8;border-radius:16px}.bub{max-width:80%;padding:12px 14px;border-radius:18px;background:#3a3a55;margin-bottom:10px}.bub.me{background:#0a84ff;margin-left:auto}.tabs{display:flex;gap:8px;margin-bottom:10px}.tabs span{flex:1;text-align:center;padding:10px;border-radius:14px;background:var(--card);cursor:pointer}
+#gps{right:38%}#gps .map{height:300px}#app .np{left:auto;right:8px;top:64px;width:calc(38% - 16px);height:auto;flex-wrap:wrap;justify-content:center;padding:16px 8px;gap:8px}#app .np svg.art{width:130px;height:130px;border-radius:16px}#app .np .t{width:100%;flex:none;text-align:center;font-size:22px}#app.sub .np{display:none}
+#gps .map{margin-top:14px}.dock{left:8px;right:auto;top:56px;bottom:8px;width:70px;height:auto;flex-direction:column;justify-content:space-around}.scr{inset:56px 0 8px 90px}
+#app{max-width:none}.sb{padding:6px 18px;font-size:17px}.sb .r{font-size:14px}.bat{width:30px;height:14px}.dock{top:40px;bottom:8px;width:64px}.dock .a svg{width:min(60px,14vh);height:min(60px,14vh)}.dock .b{width:min(64px,14vh);height:min(64px,14vh)}.scr{inset:40px 0 8px 84px}#gps .map{height:46vh;min-height:150px;margin-top:0}#app .np{top:44px;padding:12px 8px}#app .np svg.art{width:min(130px,26vh);height:min(130px,26vh)}#app .np .t{font-size:20px}.keys{grid-template-columns:repeat(6,1fr)}.orb{margin:6px auto;width:100px;height:100px}h2{margin:8px 0;font-size:24px}
+.st{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card);margin-top:8px}.st span{font-size:26px;width:30px;text-align:center}.st small{display:block;color:var(--mut)}
+.sr{display:flex;gap:8px;margin:6px 0}.sr input{flex:1;min-width:0;padding:12px;border-radius:14px;border:0;background:var(--card);color:#fff;font-size:16px}.sr button{background:#0a84ff;border-radius:14px;font-size:16px;padding:0 16px}#map{height:42vh;min-height:140px;border-radius:20px;overflow:hidden}
+@media (orientation:portrait){#gps{right:8px;bottom:92px}#app .np{left:84px;right:8px;top:auto;bottom:8px;width:auto;height:70px;flex-wrap:nowrap;justify-content:flex-start;padding:0 8px;gap:8px}#app .np svg.art{width:50px;height:50px;border-radius:9px}#app .np .t{width:auto;flex:1;text-align:left;font-size:16px}#app .np button{padding:4px}#map{height:38vh}}
+@media (orientation:landscape){#gps.on{display:flex;flex-direction:column;overflow:hidden}#gps #map{flex:1;height:auto;min-height:0}#gps .ban{flex:none;margin-top:8px;padding:8px 12px}#gps .steps{display:none}}
+#sb{display:none;position:absolute;top:10px;right:26px;z-index:1000;width:44px;height:44px;border-radius:50%;background:rgba(40,40,60,.92);font-size:20px;padding:0}@media (orientation:landscape){#gps .ban{position:absolute;left:18px;right:18px;bottom:12px;margin:0;background:rgba(26,127,55,.92);z-index:1000}#gps.nav .sr{display:none}#gps.nav #sb{display:grid;place-items:center}}
+.spd{display:flex;gap:10px;align-items:center;background:rgba(20,20,35,.92);padding:8px 12px;border-radius:18px;color:#fff;margin:10px 0 0 10px}.spd b{font-size:34px;display:block;line-height:1}.spd small{font-size:12px;color:#c8c8d8}.lm{width:54px;height:54px;border-radius:50%;background:#fff;border:6px solid #e0142b;color:#111;display:grid;place-items:center;font-weight:800;font-size:20px;flex:none}.lm.over{animation:p2 .6s infinite}@keyframes p2{50%{opacity:.4}}
+#map .leaflet-bottom .spd{margin:0 0 10px 10px}#map .leaflet-bottom .rcb{display:none;width:48px;height:48px;border-radius:50%;background:rgba(20,20,35,.92);color:#fff;font-size:26px;place-items:center;cursor:pointer;margin:0 10px 10px 0}@media (orientation:landscape){#map .leaflet-bottom .spd,#map .leaflet-bottom .rcb{margin-bottom:90px}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ee84f"/><stop offset="1" stop-color="#05b81a"/></linearGradient>
+<linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5f73"/><stop offset="1" stop-color="#e5142c"/></linearGradient>
+<linearGradient id="pin" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#ea4335"/><stop offset=".3" stop-color="#fbbc04"/><stop offset=".55" stop-color="#fbbc04"/><stop offset=".55" stop-color="#34a853"/><stop offset=".8" stop-color="#34a853"/><stop offset=".8" stop-color="#4285f4"/></linearGradient>
+<radialGradient id="si" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#7fd4ff"/><stop offset=".7" stop-color="#b04dff"/><stop offset="1" stop-color="#ff3d8b"/></radialGradient>
+<symbol id="ph" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#gg)"/><path transform="translate(18 18) scale(2.7)" fill="#fff" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></symbol>
+<symbol id="mu" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#gr)"/><path transform="translate(15 14) scale(3.1)" fill="#fff" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></symbol>
+<symbol id="gp" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#fff"/><path d="M50 14c-14 0-25 11-25 25 0 18 25 46 25 46s25-28 25-46c0-14-11-25-25-25z" fill="url(#pin)"/><circle cx="50" cy="39" r="11" fill="#fff"/></symbol>
+<symbol id="ms" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#gg)"/><ellipse cx="50" cy="46" rx="34" ry="26" fill="#fff"/><path d="M26 62 L20 80 L42 70z" fill="#fff"/></symbol>
+<symbol id="sr" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#0b0b18"/><circle cx="50" cy="50" r="30" fill="url(#si)"/></symbol>
+<symbol id="ca" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#fff"/><text x="50" y="30" font-size="19" font-weight="700" text-anchor="middle" fill="#e5142c" font-family="Arial">Sam.</text><text x="50" y="80" font-size="56" font-weight="400" text-anchor="middle" fill="#111" font-family="Arial">8</text></symbol>
+</defs></svg>
+
+<div id="app">
+<svg id="bgsvg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice"><defs>
+<linearGradient id="l1" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1a5bff" stop-opacity="0"/><stop offset=".6" stop-color="#2d8bff"/><stop offset="1" stop-color="#7fd0ff"/></linearGradient>
+<linearGradient id="l2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d04dff"/><stop offset="1" stop-color="#4a2bff" stop-opacity=".1"/></linearGradient>
+<filter id="bl"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<path d="M0 250 C120 230 230 130 300 0" stroke="url(#l1)" stroke-width="16" fill="none" filter="url(#bl)" opacity=".9"/>
+<path d="M0 250 C120 230 230 130 300 0" stroke="url(#l1)" stroke-width="3" fill="none"/>
+<path d="M0 640 C150 600 300 470 400 350" stroke="url(#l2)" stroke-width="20" fill="none" filter="url(#bl)" opacity=".85"/>
+<path d="M0 640 C150 600 300 470 400 350" stroke="url(#l2)" stroke-width="3" fill="none"/>
+<path d="M0 560 C100 540 150 500 210 440" stroke="#5b3bff" stroke-width="14" fill="none" filter="url(#bl)" opacity=".5"/></svg>
+
+<div class="sb"><span id="clk">12:00</span><span class="r"><span>▂▄▆█</span><span>5G</span><span class="bat"><i></i></span></span></div>
+
+<div class="scr" id="home">
+<div class="grid">
+<div class="ic" onclick="go('phone')"><svg><use href="#ph"/></svg>Téléphone</div>
+<div class="ic" onclick="go('music')"><svg><use href="#mu"/></svg>Musique</div>
+<div class="ic" onclick="go('gps')"><svg><use href="#gp"/></svg>GPS 50</div>
+<div class="ic" onclick="go('msg')"><svg><use href="#ms"/></svg>Messages</div>
+<div class="ic" onclick="go('siri')"><svg><use href="#sr"/></svg>Siri</div>
+
+</div>
+
+</div>
+
+<div class="scr" id="phone"><h2>Téléphone</h2><div class="tabs"><span onclick="ph(0)">Favoris</span><span onclick="ph(1)">Clavier</span></div><div id="favs"><div class="row" onclick="callN('Maman')"><div class="av">M</div><div>Maman<small>Mobile</small></div></div><div class="row" onclick="callN('Lucas')"><div class="av" style="background:#c04fff">L</div><div>Lucas<small>Mobile</small></div></div></div><div id="pad" style="display:none"><div id="num"></div>
+<div class="keys" id="keys"></div>
+<div class="row" style="justify-content:center;background:#08b81c;margin-top:12px;font-size:22px;cursor:pointer" onclick="call()">Appeler</div></div></div>
+
+<div class="scr" id="music"><svg style="width:170px;height:170px;border-radius:20px;display:block;margin:10px auto 8px"><use href="#al"/></svg><h2 style="text-align:center;margin:4px">Faded</h2><p style="text-align:center;color:var(--mut);margin-bottom:14px">Alan Walker</p>
+<div class="row"><svg class="av" style="border-radius:10px"><use href="#al"/></svg><div>Faded<small>Alan Walker</small></div></div>
+<div class="row"><div class="av" style="background:#e5142c">♫</div><div>Alone<small>Alan Walker</small></div></div>
+<div class="row"><div class="av" style="background:#e5142c">♫</div><div>On My Way<small>Alan Walker</small></div></div></div>
+
+<div class="scr" id="msg"><h2>Messages</h2>
+<div class="row" style="cursor:pointer" onclick="thread('Maman','Tu rentres à quelle heure ?')"><div class="av">M</div><div>Maman<small>Tu rentres à quelle heure ?</small></div></div>
+<div class="row" style="cursor:pointer" onclick="thread('Lucas','On se retrouve au parking')"><div class="av" style="background:#c04fff">L</div><div>Lucas<small>On se retrouve au parking</small></div></div>
+<div class="row" style="cursor:pointer" onclick="go('siri')"><div class="av" style="background:#08b81c">🎙</div><div>Répondre avec Siri<small>Dicter un message</small></div></div></div>
+
+<div class="scr" id="siri"><div class="orb" onclick="sir()"></div><h2 id="sh" style="text-align:center">Je vous écoute…</h2>
+<p style="text-align:center;color:var(--mut)">« Appelle Maman », « Lance Faded », « Va au travail »</p></div>
+
+
+
+<div class="scr on" id="gps"><button id="sb" onclick="$('gps').classList.remove('nav');setTimeout(function(){map.invalidateSize()},100)">🔍</button>
+<div class="sr"><input id="q" placeholder="Où allez-vous ?" onkeydown="if(event.key==='Enter')goTo()"><button onclick="goTo()">Y aller</button><button onclick="waze()" style="background:#33ccff;color:#04223a">Waze</button></div>
+<div id="map"></div>
+<div class="ban"><span id="gi" style="font-size:28px">➜</span><div><b id="gb">Entrez une destination</b><br><small id="gs">Itinéraire calculé pour scooter 50 cc</small></div></div>
+<div class="steps" id="steps"></div></div>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="al" viewBox="0 0 50 50"><rect width="50" height="50" fill="#06182e"/><rect width="50" height="50" fill="#0e6fb8" opacity=".35"/><path d="M8 14 L17 38 L25 22 L33 38 L42 14" stroke="#fff" stroke-width="3" fill="none"/></symbol></svg>
+<div class="np"><svg class="art"><use href="#al"/></svg><div class="t">Faded<small>Alan Walker</small></div>
+<button><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6zm.5-6l8.5 6V6z"/></svg></button>
+<button onclick="tg()"><svg viewBox="0 0 24 24"><path id="pp" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button>
+<button><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6zm9-12v12l8.5-6z"/></svg></button></div>
+
+<div class="dock">
+<div class="a" onclick="go('phone')"><svg><use href="#ph"/></svg></div><div class="a" onclick="go('music')"><svg><use href="#mu"/></svg></div><div class="a" onclick="go('gps')"><svg><use href="#gp"/></svg></div><div class="a" onclick="go('msg')"><svg><use href="#ms"/></svg></div>
+<div class="b" onclick="go('siri')"><svg viewBox="0 0 24 24"><path d="M18.9 6c-.2-.6-.8-1-1.4-1h-11c-.6 0-1.2.4-1.4 1L3 12v8c0 .6.4 1 1 1h1c.6 0 1-.4 1-1v-1h12v1c0 .6.4 1 1 1h1c.6 0 1-.4 1-1v-8zM6.5 16c-.8 0-1.5-.7-1.5-1.5S5.700 13 6.500 13s1.500.7 1.500 1.500S7.300 16 6.500 16m11 0c-.8 0-1.500-.7-1.500-1.500s.7-1.500 1.500-1.500 1.500.7 1.500 1.500-.7 1.500-1.500 1.500M5 11l1.500-4.500h11L19 11z"/></svg></div></div>
+</div>
+<script>
+function go(id){setTimeout(function(){if(window.map)map.invalidateSize()},60);document.querySelectorAll('.scr').forEach(function(e){e.classList.toggle('on',e.id===(id==='music'?'gps':id))});document.getElementById('app').classList.toggle('sub',id!=='gps'&&id!=='music');document.querySelectorAll('.dock>div').forEach(function(e){e.classList.toggle('act',(e.getAttribute('onclick')||'').indexOf("'"+id+"'")>-1)})}
+var mh=document.getElementById('msg').innerHTML;
+function thread(w,t){document.getElementById('msg').innerHTML='<h2 onclick="bk()" style="cursor:pointer">‹ '+w+'</h2><div class="bub">'+t+'</div><div class="chips"><span onclick="rep(this)">J’arrive dans 10 min</span><span onclick="rep(this)">Je suis en scooter, je te rappelle</span><span onclick="rep(this)">OK 👍</span></div>'}
+function rep(e){var b=document.createElement('div');b.className='bub me';b.textContent=e.textContent;e.parentNode.before(b)}
+function bk(){document.getElementById('msg').innerHTML=mh}
+function dest(n,k,m){document.getElementById('gb').textContent='Cap sur '+n;document.getElementById('gs').textContent=m+' min · '+k+' km'}
+function ph(i){document.getElementById('favs').style.display=i?'none':'block';document.getElementById('pad').style.display=i?'block':'none'}
+function callN(n){document.getElementById('favs').innerHTML='<div class="row">Appel de '+n+'…</div>'}
+function sir(){document.getElementById('sh').textContent='Dites votre demande…'}
+var play=true;function tg(){play=!play;document.getElementById('pp').setAttribute('d',play?'M6 5h4v14H6zm8 0h4v14h-4z':'M7 4v16l13-8z')}
+var n='';var k=document.getElementById('keys');
+'123456789*0#'.split('').forEach(function(c){var d=document.createElement('div');d.textContent=c;d.onclick=function(){n+=c;document.getElementById('num').textContent=n};k.appendChild(d)});
+function call(){document.getElementById('num').textContent=n?'Appel de '+n+'…':'Saisissez un numéro'}
+function t(){var d=new Date();document.getElementById('clk').textContent=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+t();setInterval(t,30000);
+var map=L.map('map',{zoomControl:false}).setView([49.472,1.047],14);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+var me=null,line=null,pos=null,pts=[],man=[],ci=0,first=true;
+function $(i){return document.getElementById(i)}
+function msg(t){$('gb').textContent=t;$('gs').textContent=''}
+function say(t){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u)}catch(e){}}
+function dist(a,b){var R=6371000,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
+function fm(m){return m<1000?Math.round(m/10)*10+' m':(m/1000).toFixed(1).replace('.',',')+' km'}
+function dec(s){var i=0,la=0,lo=0,o=[];while(i<s.length){var b,sh=0,r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);la+=(r&1)?~(r>>1):(r>>1);sh=0;r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);lo+=(r&1)?~(r>>1):(r>>1);o.push([la/1e6,lo/1e6])}return o}
+function render(){var m=man[ci];if(!m)return;$('gb').textContent=m.instruction;var n=man[ci+1];$('gs').textContent=n&&pos?'Dans '+fm(dist(pos,pts[n.begin_shape_index])):'';
+$('steps').innerHTML=man.map(function(x,i){return '<div class="st" style="'+(i===ci?'outline:2px solid #2de2ff':'')+'"><span>'+(i===ci?'➜':'•')+'</span><div><b>'+x.instruction+'</b><small>'+fm(x.length*1000)+'</small></div></div>'}).join('')}
+function goTo(){var q=$('q').value.trim();if(!q)return;if(!pos){msg('Position GPS indisponible : autorisez la localisation');return}msg('Recherche…');
+fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(r){if(!r.length){msg('Adresse introuvable');return}route([+r[0].lat,+r[0].lon])}).catch(function(){msg('Pas de connexion')})}
+var dst=null,rc=0,lastRc=0;
+function dseg(p,a,b){var k=Math.cos(p[0]*Math.PI/180),x=(p[1]-a[1])*k,y=p[0]-a[0],dx=(b[1]-a[1])*k,dy=b[0]-a[0],l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,(x*dx+y*dy)/l)):0;return dist(p,[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])])}
+function offRoute(){var m=1e9;for(var i=0;i<pts.length-1;i++){var d=dseg(pos,pts[i],pts[i+1]);if(d<m)m=d}return m}
+window.addEventListener('resize',function(){map.invalidateSize()});
+function waze(){var q=$('q').value.trim();var u=dst?'https://waze.com/ul?ll='+dst[0]+','+dst[1]+'&navigate=yes':q?'https://waze.com/ul?q='+encodeURIComponent(q)+'&navigate=yes':'https://waze.com/ul';window.open(u,'_blank')}
+function route(d){dst=d;msg('Calcul de l’itinéraire…');
+var body={locations:[{lat:pos[0],lon:pos[1]},{lat:d[0],lon:d[1]}],costing:'motor_scooter',costing_options:{motor_scooter:{top_speed:45,use_primary:.5}},directions_options:{language:'fr-FR',units:'kilometers'}};
+fetch('https://valhalla1.openstreetmap.de/route',{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(!j.trip){msg('Aucun itinéraire trouvé');return}
+var l=j.trip.legs[0];pts=dec(l.shape);man=l.maneuvers;ci=0;if(line)map.removeLayer(line);line=L.polyline(pts,{color:'#2de2ff',weight:7}).addTo(map);map.fitBounds(line.getBounds());render();$('gps').classList.add('nav');follow=false;showRc(1);lastDrag=0;setTimeout(function(){map.invalidateSize();map.fitBounds(line.getBounds())},150);$('gs').textContent=Math.round(j.trip.summary.time/60)+' min · '+j.trip.summary.length.toFixed(1).replace('.',',')+' km';say(man[0].instruction)}).catch(function(){msg('Erreur de calcul d’itinéraire')})}
+
+var spdC=L.control({position:'bottomleft'});spdC.onAdd=function(){var d=L.DomUtil.create('div','spd');d.innerHTML='<div><b id="sv">0</b><small>km/h</small></div><div class="lm" id="lm" style="opacity:.35">–</div>';return d};spdC.addTo(map);
+var follow=true,lastDrag=0,rcB=null;
+var rcC=L.control({position:'bottomright'});rcC.onAdd=function(){var d=L.DomUtil.create('div','rcb');d.innerHTML='◎';d.style.display='none';rcB=d;L.DomEvent.disableClickPropagation(d);d.onclick=startFollow;return d};rcC.addTo(map);
+function showRc(v){if(rcB)rcB.style.display=v?'grid':'none'}
+function startFollow(){follow=true;showRc(0);if(pos)map.setView(pos,Math.max(map.getZoom(),16))}
+map.on('dragstart',function(){follow=false;lastDrag=Date.now();showRc(1)});
+var lim=null,lq=[0,0,0],lsp=0,lastSay=0,lp=null;
+function pm(v){if(!v)return null;v=String(v).toLowerCase();if(v.indexOf('urban')>-1)return 50;if(v.indexOf('rural')>-1)return 80;if(v.indexOf('motorway')>-1)return 130;var n=parseInt(v,10);return isNaN(n)?null:n}
+function paint(){var v=Math.round(lsp||0),cap=Math.min(lim||999,45),over=v>cap,l=$('lm');$('sv').textContent=v;$('sv').style.color=over?'#ff4f6d':'#fff';l.textContent=lim||'–';l.style.opacity=lim?1:.35;l.className='lm'+(over?' over':'');
+if(over&&Date.now()-lastSay>30000){lastSay=Date.now();say((lim&&v>lim)?'Attention, vitesse limitée à '+lim:'Attention, vitesse maximale du scooter 45 kilomètres heure')}}
+function qLim(){var now=Date.now();if(now-lq[0]<5000)return;if(lq[1]&&dist(pos,[lq[1],lq[2]])<40)return;lq=[now,pos[0],pos[1]];
+var q='[out:json][timeout:8];way(around:25,'+pos[0]+','+pos[1]+')[highway~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|road|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"];out tags geom;';
+fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)}).then(function(r){return r.json()}).then(function(j){var best=1e9,l=null;(j.elements||[]).forEach(function(w){var g=w.geometry||[],m=1e9;for(var i=0;i<g.length-1;i++){var d=dseg(pos,[g[i].lat,g[i].lon],[g[i+1].lat,g[i+1].lon]);if(d<m)m=d}if(m<best){best=m;l=pm(w.tags&&w.tags.maxspeed)}});lim=l;paint()}).catch(function(){})}
+function upd(p){var t=p.timestamp,s=p.coords.speed;if(s==null||isNaN(s)){s=lp?dist(lp[0],pos)/Math.max((t-lp[1])/1000,1):0}lp=[pos,t];lsp=Math.max(0,s*3.6);if(lsp<3)lsp=0;paint();if(p.coords.accuracy<80)qLim()}
+if(navigator.geolocation)navigator.geolocation.watchPosition(function(p){pos=[p.coords.latitude,p.coords.longitude];upd(p);if(!me)me=L.circleMarker(pos,{radius:9,color:'#fff',weight:3,fillColor:'#0a84ff',fillOpacity:1}).addTo(map);me.setLatLng(pos);if(first){map.setView(pos,15);first=false}else{if(!follow&&lsp>=5&&Date.now()-lastDrag>15000)startFollow();else if(follow)map.panTo(pos)}
+if(man.length&&ci<man.length-1){var n=man[ci+1];if(dist(pos,pts[n.begin_shape_index])<30){ci++;render();say(man[ci].instruction)}else render()}
+if(pts.length&&dst&&p.coords.accuracy<80){if(offRoute()>60){rc++;if(rc>=3&&Date.now()-lastRc>20000){rc=0;lastRc=Date.now();say('Recalcul de l’itinéraire');route(dst)}}else rc=0}},function(){msg('Localisation refusée ou indisponible')},{enableHighAccuracy:true});
+
+</script>
+</body>
+</html>
