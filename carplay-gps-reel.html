@@ -54,6 +54,7 @@ h2{font-size:28px;margin:14px 0}
 .sr{display:flex;gap:8px;margin:6px 0}.sr input{flex:1;min-width:0;padding:12px;border-radius:14px;border:0;background:var(--card);color:#fff;font-size:16px}.sr button{background:#0a84ff;border-radius:14px;font-size:16px;padding:0 16px}#map{height:42vh;min-height:140px;border-radius:20px;overflow:hidden}
 @media (orientation:portrait){#gps{right:8px;bottom:92px}#app .np{left:84px;right:8px;top:auto;bottom:8px;width:auto;height:70px;flex-wrap:nowrap;justify-content:flex-start;padding:0 8px;gap:8px}#app .np svg.art{width:50px;height:50px;border-radius:9px}#app .np .t{width:auto;flex:1;text-align:left;font-size:16px}#app .np button{padding:4px}#map{height:38vh}}
 @media (orientation:landscape){#gps.on{display:flex;flex-direction:column;overflow:hidden}#gps #map{flex:1;height:auto;min-height:0}#gps .ban{flex:none;margin-top:8px;padding:8px 12px}#gps .steps{display:none}}
+#sb{display:none;position:absolute;top:10px;right:26px;z-index:1000;width:44px;height:44px;border-radius:50%;background:rgba(40,40,60,.92);font-size:20px;padding:0}@media (orientation:landscape){#gps .ban{position:absolute;left:18px;right:18px;bottom:12px;margin:0;background:rgba(26,127,55,.92);z-index:1000}#gps.nav .sr{display:none}#gps.nav #sb{display:grid;place-items:center}}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -116,7 +117,7 @@ h2{font-size:28px;margin:14px 0}
 
 
 
-<div class="scr on" id="gps">
+<div class="scr on" id="gps"><button id="sb" onclick="$('gps').classList.remove('nav');setTimeout(function(){map.invalidateSize()},100)">🔍</button>
 <div class="sr"><input id="q" placeholder="Où allez-vous ?" onkeydown="if(event.key==='Enter')goTo()"><button onclick="goTo()">Y aller</button><button onclick="waze()" style="background:#33ccff;color:#04223a">Waze</button></div>
 <div id="map"></div>
 <div class="ban"><span id="gi" style="font-size:28px">➜</span><div><b id="gb">Entrez une destination</b><br><small id="gs">Itinéraire calculé pour scooter 50 cc</small></div></div>
@@ -169,7 +170,7 @@ function waze(){var q=$('q').value.trim();var u=dst?'https://waze.com/ul?ll='+ds
 function route(d){dst=d;msg('Calcul de l’itinéraire…');
 var body={locations:[{lat:pos[0],lon:pos[1]},{lat:d[0],lon:d[1]}],costing:'motor_scooter',costing_options:{motor_scooter:{top_speed:45,use_primary:.5}},directions_options:{language:'fr-FR',units:'kilometers'}};
 fetch('https://valhalla1.openstreetmap.de/route',{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(!j.trip){msg('Aucun itinéraire trouvé');return}
-var l=j.trip.legs[0];pts=dec(l.shape);man=l.maneuvers;ci=0;if(line)map.removeLayer(line);line=L.polyline(pts,{color:'#2de2ff',weight:7}).addTo(map);map.fitBounds(line.getBounds());render();$('gs').textContent=Math.round(j.trip.summary.time/60)+' min · '+j.trip.summary.length.toFixed(1).replace('.',',')+' km';say(man[0].instruction)}).catch(function(){msg('Erreur de calcul d’itinéraire')})}
+var l=j.trip.legs[0];pts=dec(l.shape);man=l.maneuvers;ci=0;if(line)map.removeLayer(line);line=L.polyline(pts,{color:'#2de2ff',weight:7}).addTo(map);map.fitBounds(line.getBounds());render();$('gps').classList.add('nav');setTimeout(function(){map.invalidateSize();map.fitBounds(line.getBounds())},150);$('gs').textContent=Math.round(j.trip.summary.time/60)+' min · '+j.trip.summary.length.toFixed(1).replace('.',',')+' km';say(man[0].instruction)}).catch(function(){msg('Erreur de calcul d’itinéraire')})}
 if(navigator.geolocation)navigator.geolocation.watchPosition(function(p){pos=[p.coords.latitude,p.coords.longitude];if(!me)me=L.circleMarker(pos,{radius:9,color:'#fff',weight:3,fillColor:'#0a84ff',fillOpacity:1}).addTo(map);me.setLatLng(pos);if(first){map.setView(pos,15);first=false}
 if(man.length&&ci<man.length-1){var n=man[ci+1];if(dist(pos,pts[n.begin_shape_index])<30){ci++;render();say(man[ci].instruction)}else render()}
 if(pts.length&&dst&&p.coords.accuracy<80){if(offRoute()>60){rc++;if(rc>=3&&Date.now()-lastRc>20000){rc=0;lastRc=Date.now();say('Recalcul de l’itinéraire');route(dst)}}else rc=0}},function(){msg('Localisation refusée ou indisponible')},{enableHighAccuracy:true});
