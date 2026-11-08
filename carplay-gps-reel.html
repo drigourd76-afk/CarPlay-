@@ -53,6 +53,7 @@ h2{font-size:28px;margin:14px 0}
 .st{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card);margin-top:8px}.st span{font-size:26px;width:30px;text-align:center}.st small{display:block;color:var(--mut)}
 .sr{display:flex;gap:8px;margin:6px 0}.sr input{flex:1;min-width:0;padding:12px;border-radius:14px;border:0;background:var(--card);color:#fff;font-size:16px}.sr button{background:#0a84ff;border-radius:14px;font-size:16px;padding:0 16px}#map{height:42vh;min-height:140px;border-radius:20px;overflow:hidden}
 @media (orientation:portrait){#gps{right:8px;bottom:92px}#app .np{left:84px;right:8px;top:auto;bottom:8px;width:auto;height:70px;flex-wrap:nowrap;justify-content:flex-start;padding:0 8px;gap:8px}#app .np svg.art{width:50px;height:50px;border-radius:9px}#app .np .t{width:auto;flex:1;text-align:left;font-size:16px}#app .np button{padding:4px}#map{height:38vh}}
+@media (orientation:landscape){#gps.on{display:flex;flex-direction:column;overflow:hidden}#gps #map{flex:1;height:auto;min-height:0}#gps .ban{flex:none;margin-top:8px;padding:8px 12px}#gps .steps{display:none}}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -160,14 +161,18 @@ function render(){var m=man[ci];if(!m)return;$('gb').textContent=m.instruction;v
 $('steps').innerHTML=man.map(function(x,i){return '<div class="st" style="'+(i===ci?'outline:2px solid #2de2ff':'')+'"><span>'+(i===ci?'➜':'•')+'</span><div><b>'+x.instruction+'</b><small>'+fm(x.length*1000)+'</small></div></div>'}).join('')}
 function goTo(){var q=$('q').value.trim();if(!q)return;if(!pos){msg('Position GPS indisponible : autorisez la localisation');return}msg('Recherche…');
 fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(r){if(!r.length){msg('Adresse introuvable');return}route([+r[0].lat,+r[0].lon])}).catch(function(){msg('Pas de connexion')})}
-var dst=null;
+var dst=null,rc=0,lastRc=0;
+function dseg(p,a,b){var k=Math.cos(p[0]*Math.PI/180),x=(p[1]-a[1])*k,y=p[0]-a[0],dx=(b[1]-a[1])*k,dy=b[0]-a[0],l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,(x*dx+y*dy)/l)):0;return dist(p,[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])])}
+function offRoute(){var m=1e9;for(var i=0;i<pts.length-1;i++){var d=dseg(pos,pts[i],pts[i+1]);if(d<m)m=d}return m}
+window.addEventListener('resize',function(){map.invalidateSize()});
 function waze(){var q=$('q').value.trim();var u=dst?'https://waze.com/ul?ll='+dst[0]+','+dst[1]+'&navigate=yes':q?'https://waze.com/ul?q='+encodeURIComponent(q)+'&navigate=yes':'https://waze.com/ul';window.open(u,'_blank')}
 function route(d){dst=d;msg('Calcul de l’itinéraire…');
 var body={locations:[{lat:pos[0],lon:pos[1]},{lat:d[0],lon:d[1]}],costing:'motor_scooter',costing_options:{motor_scooter:{top_speed:45,use_primary:.5}},directions_options:{language:'fr-FR',units:'kilometers'}};
 fetch('https://valhalla1.openstreetmap.de/route',{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(!j.trip){msg('Aucun itinéraire trouvé');return}
 var l=j.trip.legs[0];pts=dec(l.shape);man=l.maneuvers;ci=0;if(line)map.removeLayer(line);line=L.polyline(pts,{color:'#2de2ff',weight:7}).addTo(map);map.fitBounds(line.getBounds());render();$('gs').textContent=Math.round(j.trip.summary.time/60)+' min · '+j.trip.summary.length.toFixed(1).replace('.',',')+' km';say(man[0].instruction)}).catch(function(){msg('Erreur de calcul d’itinéraire')})}
 if(navigator.geolocation)navigator.geolocation.watchPosition(function(p){pos=[p.coords.latitude,p.coords.longitude];if(!me)me=L.circleMarker(pos,{radius:9,color:'#fff',weight:3,fillColor:'#0a84ff',fillOpacity:1}).addTo(map);me.setLatLng(pos);if(first){map.setView(pos,15);first=false}
-if(man.length&&ci<man.length-1){var n=man[ci+1];if(dist(pos,pts[n.begin_shape_index])<30){ci++;render();say(man[ci].instruction)}else render()}},function(){msg('Localisation refusée ou indisponible')},{enableHighAccuracy:true});
+if(man.length&&ci<man.length-1){var n=man[ci+1];if(dist(pos,pts[n.begin_shape_index])<30){ci++;render();say(man[ci].instruction)}else render()}
+if(pts.length&&dst&&p.coords.accuracy<80){if(offRoute()>60){rc++;if(rc>=3&&Date.now()-lastRc>20000){rc=0;lastRc=Date.now();say('Recalcul de l’itinéraire');route(dst)}}else rc=0}},function(){msg('Localisation refusée ou indisponible')},{enableHighAccuracy:true});
 
 </script>
 </body>
