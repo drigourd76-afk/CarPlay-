@@ -210,6 +210,7 @@ if(pts.length&&dst&&p.coords.accuracy<80){if(offRoute()>60){rc++;if(rc>=3&&Date.
 function sim(){if(simT){clearInterval(simT);simT=null;$('simb').textContent='▶';return}if(!pts.length){msg('Calculez d’abord un itinéraire');return}var d=0;$('simb').textContent='■';simT=setInterval(function(){d+=14;var a=d,k=0;while(k<pts.length-1){var L=dist(pts[k],pts[k+1]);if(a<=L)break;a-=L;k++}if(k>=pts.length-1){sim();return}var t=a/Math.max(dist(pts[k],pts[k+1]),1);onPos({coords:{latitude:pts[k][0]+t*(pts[k+1][0]-pts[k][0]),longitude:pts[k][1]+t*(pts[k+1][1]-pts[k][1]),speed:13.9,accuracy:5},timestamp:Date.now()})},1000)}
 if(navigator.geolocation)navigator.geolocation.watchPosition(function(p){if(!simT)onPos(p)},function(){msg('Localisation refusée ou indisponible')},{enableHighAccuracy:true});
 
-</script>
+</script
+<script src="./wake-lock.js"></script>
 </body>
 </html>
